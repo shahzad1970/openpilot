@@ -1,4 +1,4 @@
-
+from cereal import car
 
 class CAR:
   AP2_MODELS = 'TESLA AP2 MODEL S'
@@ -10,5 +10,41 @@ FINGERPRINTS = {
 }
 
 DBC = {
-  CAR.AP2_MODELS: dbc_dict('tesla_can', 'tesla_radar'),
+  CAR.AP2_MODELS: dbc_dict(None, 'tesla_radar', chassis_dbc='tesla_can'),
 }
+
+class CANBUS:
+  chassis = 0
+  autopilot = 2
+  radar = 1
+
+class CRUISESTATE:
+  OFF: 0
+  STANDBY: 1
+  ENABLED: 2
+  STANDSTILL: 3
+  OVERRIDE: 4
+  FAULT: 5
+  PRE_FAULT: 6
+  PRE_CANCEL: 7
+
+class SPEEDUNITS:
+  MPH: 0
+  KPH: 1
+
+class GEAR:
+  INVALID = 0
+  P = 1
+  R = 2
+  N = 3
+  D = 4
+  SNA = 7
+
+  GEAR_MAP = {
+    GEAR.INVALID: car.CarState.GearShifter.unknown,
+    GEAR.P: car.CarState.GearShifter.park,
+    GEAR.R: car.CarState.GearShifter.reverse,
+    GEAR.N: car.CarState.GearShifter.neutral,
+    GEAR.D: car.CarState.GearShifter.drive,
+    GEAR.SNA: car.CarState.GearShifter.unknown,
+  }
