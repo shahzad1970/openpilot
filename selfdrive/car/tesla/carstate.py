@@ -27,7 +27,7 @@ class CarState(CarStateBase):
     ret.steeringAngle = cp.vl["STW_ANGLHP_STAT"]["StW_AnglHP"]
     ret.steeringRate = cp.vl["STW_ANGLHP_STAT"]["StW_AnglHP_Spd"]
     ret.steeringTorque = cp.vl["EPAS_sysStatus"]["EPAS_torsionBarTorque"]
-    ret.steeringPressed = (cp.vl["EPAS_sysStatus"]["handsOnLevel"] > 0)
+    ret.steeringPressed = (cp.vl["EPAS_sysStatus"]["EPAS_handsOnLevel"] > 0)
     ret.steerError = bool(cp.vl["EPAS_sysStatus"]["EPAS_steeringFault"])
 
     # Cruise state
@@ -36,7 +36,6 @@ class CarState(CarStateBase):
       ret.cruiseState.speed = cp.vl["DI_state"]["DI_digitalSpeed"] * CV.KPH_TO_MS
     elif cp.vl["DI_state"]["DI_speedUnits"] == SPEEDUNITS.MPH:
       ret.cruiseState.speed = cp.vl["DI_state"]["DI_digitalSpeed"] * CV.MPH_TO_MS
-    ret.cruiseState.speed = cp.vl["DI_state"]["DI_digitalSpeed"] *
     ret.cruiseState.available = ((cp.vl["DI_state"]["DI_cruiseState"] == CRUISESTATE.STANDBY) or ret.cruiseState.enabled)
     ret.cruiseState.standstill = (cp.vl["DI_state"]["DI_cruiseState"] == CRUISESTATE.STANDSTILL)
 
@@ -56,7 +55,7 @@ class CarState(CarStateBase):
       ("DI_brakePedal", "DI_torque2", 0),
       ("StW_AnglHP", "STW_ANGLHP_STAT", 0),
       ("StW_AnglHP_Spd", "STW_ANGLHP_STAT", 0),
-      ("handsOnLevel", "EPAS_sysStatus", 0),
+      ("EPAS_handsOnLevel", "EPAS_sysStatus", 0),
       ("EPAS_torsionBarTorque", "EPAS_sysStatus", 0),
       ("EPAS_steeringFault", "EPAS_sysStatus", 0),
       ("DI_cruiseState", "DI_state", 0),

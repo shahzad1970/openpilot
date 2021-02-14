@@ -1,3 +1,4 @@
+from selfdrive.car import dbc_dict
 from cereal import car
 
 class CAR:
@@ -19,18 +20,18 @@ class CANBUS:
   radar = 1
 
 class CRUISESTATE:
-  OFF: 0
-  STANDBY: 1
-  ENABLED: 2
-  STANDSTILL: 3
-  OVERRIDE: 4
-  FAULT: 5
-  PRE_FAULT: 6
-  PRE_CANCEL: 7
+  OFF = 0
+  STANDBY = 1
+  ENABLED = 2
+  STANDSTILL = 3
+  OVERRIDE = 4
+  FAULT = 5
+  PRE_FAULT = 6
+  PRE_CANCEL = 7
 
 class SPEEDUNITS:
-  MPH: 0
-  KPH: 1
+  MPH = 0
+  KPH = 1
 
 class GEAR:
   INVALID = 0
@@ -41,10 +42,10 @@ class GEAR:
   SNA = 7
 
   GEAR_MAP = {
-    GEAR.INVALID: car.CarState.GearShifter.unknown,
-    GEAR.P: car.CarState.GearShifter.park,
-    GEAR.R: car.CarState.GearShifter.reverse,
-    GEAR.N: car.CarState.GearShifter.neutral,
-    GEAR.D: car.CarState.GearShifter.drive,
-    GEAR.SNA: car.CarState.GearShifter.unknown,
+    INVALID: car.CarState.GearShifter.unknown,
+    P: car.CarState.GearShifter.park,
+    R: car.CarState.GearShifter.reverse,
+    N: car.CarState.GearShifter.neutral,
+    D: car.CarState.GearShifter.drive,
+    SNA: car.CarState.GearShifter.unknown,
   }
