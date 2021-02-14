@@ -5,7 +5,6 @@ from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
 
 class CarState(CarStateBase):
-
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
 

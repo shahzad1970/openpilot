@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 from cereal import car
-from selfdrive.config import Conversions as CV
 from selfdrive.car.tesla.values import CAR
 from selfdrive.car import STD_CARGO_KG, gen_empty_fingerprint
 from selfdrive.car.interfaces import CarInterfaceBase
 
 
 class CarInterface(CarInterfaceBase):
-  def __init__(self, CP, CarController, CarState):
-    super().__init__(CP, CarController, CarState)
-
   @staticmethod
   def compute_gb(accel, speed):
     # TODO: is this correct?
