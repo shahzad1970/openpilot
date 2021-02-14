@@ -1,15 +1,18 @@
 from cereal import car
-from selfdrive.car.tesla.values import DBC, CANBUS, CRUISESTATE, SPEEDUNITS, GEAR
+from selfdrive.car.tesla.values import DBC, CANBUS, CRUISESTATE, SPEEDUNITS, GEAR, BUTTONS
 from selfdrive.car.interfaces import CarStateBase
 from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
 
 class CarState(CarStateBase):
+  def __init__(self, CP):
+    super().__init__(CP)
+    self.button_states = {button.event_type: False for button in BUTTONS}
+
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
 
     # Vehicle speed
-    # TODO: is this always km/h?
     ret.vEgoRaw = cp.vl["ESP_B"]["ESP_vehicleSpeed"] * CV.KPH_TO_MS
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
     ret.standstill = (ret.vEgo < 0.1)
@@ -41,7 +44,18 @@ class CarState(CarStateBase):
     # Gear
     ret.gearShifter = GEAR.GEAR_MAP[cp.vl["DI_torque2"]["DI_gear"]]
 
-    # TODO: buttons, blinkers, door, blindspot
+    # Buttons
+    ret.buttonEvents = []
+    for button in BUTTONS:
+      state = (cp.vl[button.can_addr][button.can_msg] in button.values)
+      if self.button_states[button.event_type] != state:
+        event = car.CarState.ButtonEvent.new_message()
+        event.type = button.event_type
+        event.pressed = state
+        ret.buttonEvents.append(event)
+      self.button_states[button.event_type] = state
+
+    # TODO: blinkers, blindspot, doors
 
     return ret
 
@@ -61,6 +75,8 @@ class CarState(CarStateBase):
       ("DI_digitalSpeed", "DI_state", 0),
       ("DI_speedUnits", "DI_state", 0),
       ("DI_gear", "DI_torque2", 0),
+      ("SpdCtrlLvr_Stat", "STW_ACTN_RQ", 0),
+      ("TurnIndLvr_Stat", "STW_ACTN_RQ", 0),
     ]
 
     checks = [
@@ -71,6 +87,7 @@ class CarState(CarStateBase):
       ("STW_ANGLHP_STAT", 100),
       ("EPAS_sysStatus", 25),
       ("DI_state", 10),
+      ("STW_ACTN_RQ", 10),
     ]
 
     return CANParser(DBC[CP.carFingerprint]['chassis'], signals, checks, CANBUS.chassis)
