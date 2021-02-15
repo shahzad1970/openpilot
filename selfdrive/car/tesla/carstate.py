@@ -45,15 +45,16 @@ class CarState(CarStateBase):
     ret.gearShifter = GEAR.GEAR_MAP[cp.vl["DI_torque2"]["DI_gear"]]
 
     # Buttons
-    ret.buttonEvents = []
+    buttonEvents = []
     for button in BUTTONS:
       state = (cp.vl[button.can_addr][button.can_msg] in button.values)
       if self.button_states[button.event_type] != state:
         event = car.CarState.ButtonEvent.new_message()
         event.type = button.event_type
         event.pressed = state
-        ret.buttonEvents.append(event)
+        buttonEvents.append(event)
       self.button_states[button.event_type] = state
+    ret.buttonEvents = buttonEvents
 
     # TODO: blinkers, blindspot, doors
 
