@@ -71,6 +71,10 @@ class CarState(CarStateBase):
     ret.leftBlinker = (cp.vl["GTW_carState"]["BC_indicatorLStatus"] == 1)
     ret.rightBlinker = (cp.vl["GTW_carState"]["BC_indicatorRStatus"] == 1)
 
+    # Seatbelt
+    # TODO: convert constants to DBC values
+    ret.seatbeltUnlatched = (cp.vl["SDM1"]["SDM_bcklDrivStatus"] == 1)
+
     # TODO: blinkers, blindspot
 
     return ret
@@ -101,6 +105,7 @@ class CarState(CarStateBase):
       ("BOOT_STATE", "GTW_carState", 1),
       ("BC_indicatorLStatus", "GTW_carState", 1),
       ("BC_indicatorRStatus", "GTW_carState", 1),
+      ("SDM_bcklDrivStatus", "SDM1"),
     ]
 
     checks = [
@@ -113,6 +118,7 @@ class CarState(CarStateBase):
       ("DI_state", 10),
       ("STW_ACTN_RQ", 10),
       ("GTW_carState", 10),
+      ("SDM1", 10),
     ]
 
     return CANParser(DBC[CP.carFingerprint]['chassis'], signals, checks, CANBUS.chassis)
