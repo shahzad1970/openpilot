@@ -70,7 +70,7 @@ class CarState(CarStateBase):
 
     # Seatbelt
     # TODO: convert constants to DBC values
-    ret.seatbeltUnlatched = (cp.vl["SDM1"]["SDM_bcklDrivStatus"] == 1)
+    ret.seatbeltUnlatched = (cp.vl["SDM1"]["SDM_bcklDrivStatus"] != 1)
 
     # TODO: blindspot
 
@@ -102,7 +102,7 @@ class CarState(CarStateBase):
       ("BOOT_STATE", "GTW_carState", 1),
       ("BC_indicatorLStatus", "GTW_carState", 1),
       ("BC_indicatorRStatus", "GTW_carState", 1),
-      ("SDM_bcklDrivStatus", "SDM1"),
+      ("SDM_bcklDrivStatus", "SDM1", 0),
     ]
 
     checks = [
