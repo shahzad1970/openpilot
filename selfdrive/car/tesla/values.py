@@ -26,36 +26,16 @@ class CANBUS:
   autopilot = 2
   radar = 1
 
-class CRUISESTATE:
-  OFF = 0
-  STANDBY = 1
-  ENABLED = 2
-  STANDSTILL = 3
-  OVERRIDE = 4
-  FAULT = 5
-  PRE_FAULT = 6
-  PRE_CANCEL = 7
+GEAR_MAP = {
+  "DI_GEAR_INVALID": car.CarState.GearShifter.unknown,
+  "DI_GEAR_P": car.CarState.GearShifter.park,
+  "DI_GEAR_R": car.CarState.GearShifter.reverse,
+  "DI_GEAR_N": car.CarState.GearShifter.neutral,
+  "DI_GEAR_D": car.CarState.GearShifter.drive,
+  "DI_GEAR_SNA": car.CarState.GearShifter.unknown,
+}
 
-class SPEEDUNITS:
-  MPH = 0
-  KPH = 1
-
-class GEAR:
-  INVALID = 0
-  P = 1
-  R = 2
-  N = 3
-  D = 4
-  SNA = 7
-
-  GEAR_MAP = {
-    INVALID: car.CarState.GearShifter.unknown,
-    P: car.CarState.GearShifter.park,
-    R: car.CarState.GearShifter.reverse,
-    N: car.CarState.GearShifter.neutral,
-    D: car.CarState.GearShifter.drive,
-    SNA: car.CarState.GearShifter.unknown,
-  }
+DOORS = ["DOOR_STATE_FL", "DOOR_STATE_FR", "DOOR_STATE_RL", "DOOR_STATE_RR", "DOOR_STATE_FrontTrunk", "BOOT_STATE"]
 
 # Make sure the message and addr is also in the CAN parser!
 BUTTONS = [

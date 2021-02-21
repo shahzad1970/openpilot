@@ -1,13 +1,15 @@
 from cereal import car
-from selfdrive.car.tesla.values import DBC, CANBUS, CRUISESTATE, SPEEDUNITS, GEAR, BUTTONS
+from selfdrive.car.tesla.values import DBC, CANBUS, GEAR_MAP, DOORS, BUTTONS
 from selfdrive.car.interfaces import CarStateBase
 from opendbc.can.parser import CANParser
+from opendbc.can.can_define import CANDefine
 from selfdrive.config import Conversions as CV
 
 class CarState(CarStateBase):
   def __init__(self, CP):
     super().__init__(CP)
     self.button_states = {button.event_type: False for button in BUTTONS}
+    self.can_define = CANDefine(DBC[CP.carFingerprint]['chassis'])
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
@@ -33,16 +35,18 @@ class CarState(CarStateBase):
     ret.steerError = bool(cp.vl["EPAS_sysStatus"]["EPAS_steeringFault"])
 
     # Cruise state
-    ret.cruiseState.enabled = (cp.vl["DI_state"]["DI_cruiseState"] in [CRUISESTATE.ENABLED, CRUISESTATE.STANDSTILL, CRUISESTATE.OVERRIDE, CRUISESTATE.PRE_FAULT, CRUISESTATE.PRE_CANCEL])
-    if cp.vl["DI_state"]["DI_speedUnits"] == SPEEDUNITS.KPH:
+    cruise_state = self.can_define.dv["DI_state"]["DI_cruiseState"].get(int(cp.vl["DI_state"]["DI_cruiseState"]), None)
+    speed_units = self.can_define.dv["DI_state"]["DI_speedUnits"].get(int(cp.vl["DI_state"]["DI_speedUnits"]), None)
+    ret.cruiseState.enabled = (cruise_state in ["ENABLED", "STANDSTILL", "OVERRIDE", "PRE_FAULT", "PRE_CANCEL"])
+    if speed_units == "KPH":
       ret.cruiseState.speed = cp.vl["DI_state"]["DI_digitalSpeed"] * CV.KPH_TO_MS
-    elif cp.vl["DI_state"]["DI_speedUnits"] == SPEEDUNITS.MPH:
+    elif speed_units == "MPH":
       ret.cruiseState.speed = cp.vl["DI_state"]["DI_digitalSpeed"] * CV.MPH_TO_MS
-    ret.cruiseState.available = ((cp.vl["DI_state"]["DI_cruiseState"] == CRUISESTATE.STANDBY) or ret.cruiseState.enabled)
-    ret.cruiseState.standstill = (cp.vl["DI_state"]["DI_cruiseState"] == CRUISESTATE.STANDSTILL)
+    ret.cruiseState.available = ((cruise_state == "STANDBY") or ret.cruiseState.enabled)
+    ret.cruiseState.standstill = (cruise_state == "STANDSTILL")
 
     # Gear
-    ret.gearShifter = GEAR.GEAR_MAP[cp.vl["DI_torque2"]["DI_gear"]]
+    ret.gearShifter = GEAR_MAP[self.can_define.dv["DI_torque2"]["DI_gear"].get(int(cp.vl["DI_torque2"]["DI_gear"]), "DI_GEAR_INVALID")]
 
     # Buttons
     buttonEvents = []
@@ -57,14 +61,7 @@ class CarState(CarStateBase):
     ret.buttonEvents = buttonEvents
 
     # Doors
-    # TODO: convert constants to DBC values
-    door_fl_open = (cp.vl["GTW_carState"]["DOOR_STATE_FL"] == 1)
-    door_fr_open = (cp.vl["GTW_carState"]["DOOR_STATE_FR"] == 1)
-    door_rl_open = (cp.vl["GTW_carState"]["DOOR_STATE_RL"] == 1)
-    door_rr_open = (cp.vl["GTW_carState"]["DOOR_STATE_RR"] == 1)
-    door_frunk_open = (cp.vl["GTW_carState"]["DOOR_STATE_FrontTrunk"] == 1)
-    door_boot_open = (cp.vl["GTW_carState"]["BOOT_STATE"] == 1)
-    ret.doorOpen = (door_fl_open or door_fr_open or door_rl_open or door_rr_open or door_frunk_open or door_boot_open)
+    ret.doorOpen = any([(self.can_define.dv["GTW_carState"][door].get(int(cp.vl["GTW_carState"][door]), "open") == "open") for door in DOORS])
 
     # Blinkers
     # TODO: convert constants to DBC values
@@ -75,7 +72,7 @@ class CarState(CarStateBase):
     # TODO: convert constants to DBC values
     ret.seatbeltUnlatched = (cp.vl["SDM1"]["SDM_bcklDrivStatus"] == 1)
 
-    # TODO: blinkers, blindspot
+    # TODO: blindspot
 
     return ret
 
