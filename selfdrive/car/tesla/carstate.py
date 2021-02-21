@@ -56,7 +56,20 @@ class CarState(CarStateBase):
       self.button_states[button.event_type] = state
     ret.buttonEvents = buttonEvents
 
-    # TODO: blinkers, blindspot, doors
+    # Doors
+    # TODO: convert constants to DBC values
+    door_fl_open = (cp.vl["GTW_carState"]["DOOR_STATE_FL"] == 1)
+    door_fr_open = (cp.vl["GTW_carState"]["DOOR_STATE_FR"] == 1)
+    door_rl_open = (cp.vl["GTW_carState"]["DOOR_STATE_RL"] == 1)
+    door_rr_open = (cp.vl["GTW_carState"]["DOOR_STATE_RR"] == 1)
+    door_frunk_open = (cp.vl["GTW_carState"]["DOOR_STATE_FrontTrunk"] == 1)
+    door_boot_open = (cp.vl["GTW_carState"]["BOOT_STATE"] == 1)
+    ret.doorOpen = (door_fl_open or door_fr_open or door_rl_open or door_rr_open or door_frunk_open or door_boot_open)
+
+    # Blindspots
+
+
+    # TODO: blinkers, blindspot
 
     return ret
 
@@ -78,6 +91,12 @@ class CarState(CarStateBase):
       ("DI_gear", "DI_torque2", 0),
       ("SpdCtrlLvr_Stat", "STW_ACTN_RQ", 0),
       ("TurnIndLvr_Stat", "STW_ACTN_RQ", 0),
+      ("DOOR_STATE_FL", "GTW_carState", 1),
+      ("DOOR_STATE_FR", "GTW_carState", 1),
+      ("DOOR_STATE_RL", "GTW_carState", 1),
+      ("DOOR_STATE_RR", "GTW_carState", 1),
+      ("DOOR_STATE_FrontTrunk", "GTW_carState", 1),
+      ("BOOT_STATE", "GTW_carState", 1),
     ]
 
     checks = [
@@ -89,6 +108,7 @@ class CarState(CarStateBase):
       ("EPAS_sysStatus", 25),
       ("DI_state", 10),
       ("STW_ACTN_RQ", 10),
+      ("GTW_carState", 10),
     ]
 
     return CANParser(DBC[CP.carFingerprint]['chassis'], signals, checks, CANBUS.chassis)
