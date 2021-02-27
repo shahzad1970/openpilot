@@ -1,3 +1,4 @@
+import copy
 from cereal import car
 from selfdrive.car.tesla.values import DBC, CANBUS, GEAR_MAP, DOORS, BUTTONS
 from selfdrive.car.interfaces import CarStateBase
@@ -10,6 +11,9 @@ class CarState(CarStateBase):
     super().__init__(CP)
     self.button_states = {button.event_type: False for button in BUTTONS}
     self.can_define = CANDefine(DBC[CP.carFingerprint]['chassis'])
+
+    # Messages needed by carcontroller
+    self.msg_stw_actn_req = None
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
@@ -73,6 +77,9 @@ class CarState(CarStateBase):
     ret.seatbeltUnlatched = (cp.vl["SDM1"]["SDM_bcklDrivStatus"] != 1)
 
     # TODO: blindspot
+
+    # Messages needed by carcontroller
+    self.msg_stw_actn_req = copy.copy(cp.vl["STW_ACTN_RQ"])
 
     return ret
 

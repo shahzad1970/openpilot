@@ -44,5 +44,6 @@ class CarInterface(CarInterfaceBase):
     return ret.as_reader()
 
   def apply(self, c):
-    # No control for now
-    return []
+    can_sends = self.CC.update(c.enabled, self.CS, self.frame, c.actuators, c.cruiseControl.cancel)
+    self.frame += 1
+    return can_sends

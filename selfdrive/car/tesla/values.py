@@ -5,6 +5,7 @@ from selfdrive.car import dbc_dict
 from cereal import car
 
 Button = namedtuple('Button', ['event_type', 'can_addr', 'can_msg', 'values'])
+AngleRateLimit = namedtuple('AngleRateLimit', ['speed_points', 'max_angle_diff_points'])
 
 class CAR:
   AP2_MODELS = 'TESLA AP2 MODEL S'
@@ -46,3 +47,7 @@ BUTTONS = [
   Button(car.CarState.ButtonEvent.Type.cancel, "STW_ACTN_RQ", "SpdCtrlLvr_Stat", [2]),
   Button(car.CarState.ButtonEvent.Type.resumeCruise, "STW_ACTN_RQ", "SpdCtrlLvr_Stat", [1]),
 ]
+
+class CarControllerParams:
+  RATE_LIMIT_UP = AngleRateLimit(speed_points=[0., 5., 15.], max_angle_diff_points=[5., .8, .15])
+  RATE_LIMIT_DOWN = AngleRateLimit(speed_points=[0., 5., 15.], max_angle_diff_points=[5., 3.5, 0.4])
