@@ -16,6 +16,10 @@ class CarInterface(CarInterfaceBase):
     ret = CarInterfaceBase.get_std_params(candidate, fingerprint)
     ret.carName = "tesla"
     ret.safetyModel = car.CarParams.SafetyModel.tesla
+    ret.steerControlType = car.CarParams.SteerControlType.angle
+    ret.enableCamera = True
+    ret.openpilotLongitudinalControl = False
+    ret.communityFeature = True
 
     if candidate == CAR.AP2_MODELS:
       ret.mass = 2100. + STD_CARGO_KG
