@@ -21,7 +21,7 @@ from common.text_window import TextWindow
 import selfdrive.crash as crash
 from selfdrive.hardware import HARDWARE, EON, PC, TICI
 from selfdrive.hardware.eon.apk import update_apks, pm_apply_packages, start_offroad
-from selfdrive.swaglog import cloudlog, add_logentries_handler
+from selfdrive.swaglog import cloudlog, add_file_handler
 from selfdrive.version import version, dirty
 
 os.environ['BASEDIR'] = BASEDIR
@@ -127,7 +127,7 @@ def build():
         errors = [line.decode('utf8', 'replace') for line in compile_output
                   if any([err in line for err in [b'error: ', b'not found, needed by target']])]
         error_s = "\n".join(errors)
-        add_logentries_handler(cloudlog)
+        add_file_handler(cloudlog)
         cloudlog.error("scons build failed\n" + error_s)
 
         # Show TextWindow
@@ -580,7 +580,7 @@ if __name__ == "__main__":
   try:
     main()
   except Exception:
-    add_logentries_handler(cloudlog)
+    add_file_handler(cloudlog)
     cloudlog.exception("Manager failed to start")
 
     # Show last 3 lines of traceback
