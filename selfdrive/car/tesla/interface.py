@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from cereal import car
 from selfdrive.car.tesla.values import CAR
-from selfdrive.car import STD_CARGO_KG, gen_empty_fingerprint
+from selfdrive.car import STD_CARGO_KG, gen_empty_fingerprint, scale_rot_inertia, scale_tire_stiffness
 from selfdrive.car.interfaces import CarInterfaceBase
 
 
@@ -31,14 +31,14 @@ class CarInterface(CarInterfaceBase):
 
     if candidate == CAR.AP2_MODELS:
       ret.mass = 2100. + STD_CARGO_KG
-      ret.rotationalInertia = 2500.
       ret.wheelbase = 2.959
       ret.centerToFront = ret.wheelbase * 0.5
-      ret.steerRatio = 11.5
-      ret.tireStiffnessFront = 85100
-      ret.tireStiffnessRear = 90000
+      ret.steerRatio = 15.0
     else:
       raise ValueError(f"Unsupported car: {candidate}")
+
+    ret.rotationalInertia = scale_rot_inertia(ret.mass, ret.wheelbase)
+    ret.tireStiffnessFront, ret.tireStiffnessRear = scale_tire_stiffness(ret.mass, ret.wheelbase, ret.centerToFront)
 
     return ret
 
