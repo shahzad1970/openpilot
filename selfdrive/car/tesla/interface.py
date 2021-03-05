@@ -52,8 +52,8 @@ class CarInterface(CarInterfaceBase):
     events = self.create_common_events(ret)
 
     ret.events = events.to_msg()
-
-    return ret.as_reader()
+    self.CS.out = ret.as_reader()
+    return self.CS.out
 
   def apply(self, c):
     can_sends = self.CC.update(c.enabled, self.CS, self.frame, c.actuators, c.cruiseControl.cancel)

@@ -24,6 +24,7 @@ class CarController():
       # TODO: Driver torque blending
     else:
       apply_angle = CS.out.steeringAngleDeg
+
     self.last_angle = apply_angle
 
     can_sends.append(self.tesla_can.create_steering_control(apply_angle, enabled, frame))
