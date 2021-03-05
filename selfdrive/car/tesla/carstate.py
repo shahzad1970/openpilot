@@ -32,8 +32,8 @@ class CarState(CarStateBase):
     ret.brakePressed = bool(cp.vl["DI_torque2"]["DI_brakePedal"])
 
     # Steering wheel
-    ret.steeringAngleDeg = -cp.vl["STW_ANGLHP_STAT"]["StW_AnglHP"]
-    ret.steeringRateDeg = -cp.vl["STW_ANGLHP_STAT"]["StW_AnglHP_Spd"]
+    ret.steeringAngleDeg = -cp.vl["EPAS_sysStatus"]["EPAS_internalSAS"]
+    ret.steeringRateDeg = -cp.vl["STW_ANGLHP_STAT"]["StW_AnglHP_Spd"] # This is from a different angle sensor, and at different rate
     ret.steeringTorque = -cp.vl["EPAS_sysStatus"]["EPAS_torsionBarTorque"]
     ret.steeringPressed = (cp.vl["EPAS_sysStatus"]["EPAS_handsOnLevel"] > 0)
     ret.steerError = bool(cp.vl["EPAS_sysStatus"]["EPAS_steeringFault"])
@@ -95,6 +95,7 @@ class CarState(CarStateBase):
       ("EPAS_handsOnLevel", "EPAS_sysStatus", 0),
       ("EPAS_torsionBarTorque", "EPAS_sysStatus", 0),
       ("EPAS_steeringFault", "EPAS_sysStatus", 0),
+      ("EPAS_internalSAS", "EPAS_sysStatus", 0),
       ("DI_cruiseState", "DI_state", 0),
       ("DI_digitalSpeed", "DI_state", 0),
       ("DI_speedUnits", "DI_state", 0),
