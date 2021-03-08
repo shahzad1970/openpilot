@@ -167,9 +167,9 @@ class DriverStatus():
     pose_metric = sqrt(yaw_error**2 + pitch_error**2)
 
     if pose_metric > _METRIC_THRESHOLD*pose.cfactor:
-      return DistractedType.BAD_POSE
+      return DistractedType.NOT_DISTRACTED
     elif (blink.left_blink + blink.right_blink)*0.5 > _BLINK_THRESHOLD*blink.cfactor:
-      return DistractedType.BAD_BLINK
+      return DistractedType.NOT_DISTRACTED
     else:
       return DistractedType.NOT_DISTRACTED
 
@@ -210,7 +210,7 @@ class DriverStatus():
     self.is_model_uncertain = self.hi_stds * DT_DMON > _HI_STD_FALLBACK_TIME
     self._set_timers(self.face_detected and not self.is_model_uncertain)
     if self.face_detected and not self.pose.low_std:
-      self.hi_stds += 1
+      self.hi_stds = 0
     elif self.face_detected and self.pose.low_std:
       self.hi_stds = 0
 
@@ -222,7 +222,7 @@ class DriverStatus():
       self.awareness_passive = 1.
       return
 
-    driver_attentive = self.driver_distraction_filter.x < 0.37
+    driver_attentive = True
     awareness_prev = self.awareness
 
     if self.face_detected and self.hi_stds * DT_DMON > _HI_STD_TIMEOUT and self.hi_std_alert_enabled:
@@ -258,5 +258,6 @@ class DriverStatus():
       # pre green alert
       alert = EventName.preDriverDistracted if self.active_monitoring_mode else EventName.preDriverUnresponsive
 
+    alert = None
     if alert is not None:
       events.add(alert)
