@@ -183,8 +183,8 @@ class DriverStatus():
                                     driver_state.faceOrientationStd, driver_state.facePositionStd]):
       return
 
-    self.face_partial = driver_state.partialFace > _PARTIAL_FACE_THRESHOLD
-    self.face_detected = driver_state.faceProb > _FACE_THRESHOLD or self.face_partial
+    self.face_partial = False
+    self.face_detected = True
     self.pose.roll, self.pose.pitch, self.pose.yaw = face_orientation_from_net(driver_state.faceOrientation, driver_state.facePosition, cal_rpy, self.is_rhd_region)
     self.pose.pitch_std = driver_state.faceOrientationStd[0]
     self.pose.yaw_std = driver_state.faceOrientationStd[1]
